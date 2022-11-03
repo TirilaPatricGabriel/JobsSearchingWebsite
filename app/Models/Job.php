@@ -11,6 +11,7 @@ use App\Models\Study;
 use App\Models\Type;
 use App\Models\User;
 use App\Models\Company;
+use App\Models\Language;
 
 
 class Job extends Model
@@ -43,5 +44,9 @@ class Job extends Model
 
     public function types(){
         return $this->belongsToMany(Type::class);
+    }
+
+    public function languages(){
+        return $this->belongsToMany(Language::class);
     }
 }

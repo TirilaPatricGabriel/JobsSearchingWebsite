@@ -23,3 +23,6 @@ Route::get('/register', function () {
 Route::get('/login', function () {
     return view('auth/login');
 });
+Route::get('/createjob', function () {
+    return view('jobs/createjob');
+});

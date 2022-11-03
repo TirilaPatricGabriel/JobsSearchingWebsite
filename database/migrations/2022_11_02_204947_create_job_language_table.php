@@ -13,9 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('types', function (Blueprint $table) {
+        Schema::create('job_language', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->integer('job_id')->unsigned();
+            $table->integer('language_id')->unsigned();
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('types');
+        Schema::dropIfExists('job_language');
     }
 };

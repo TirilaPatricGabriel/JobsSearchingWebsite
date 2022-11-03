@@ -3,6 +3,7 @@
     <a href="login">Login</a>
     <a href="register">Register</a>
     <Logout></Logout>
+    <a href="createjob">Create job</a>
 </template>
 
 <script>
