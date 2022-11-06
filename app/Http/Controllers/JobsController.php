@@ -23,7 +23,17 @@ class JobsController extends Controller
 {
     public function index()
     {
-        //
+        $jobs = Job::all();
+        foreach($jobs as $job){
+            $job->domains;
+            $job->languages;
+            $job->locations;
+            $job->types;
+            $job->studies;
+            $job->experiences;
+        }
+
+        return response(['jobs' => $jobs]);
     }
 
 
@@ -37,43 +47,35 @@ class JobsController extends Controller
             'company' => $request->company,
             'salary' => $request->salary,
             'user_id' => $user_id
-        ]);        
+        ]);     
 
         foreach($request->domain as $domain_id){
-            $domain_job = Domain_job::create([
-                'domain_id' => $domain_id,
-                'job_id' => $job->id
-            ]);
+            $domain = Domain::findOrFail($domain_id);
+            $job->domains()->attach($domain);
         }
         foreach($request->experience as $experience_id){
-            $experience_job = Experience_job::create([
-                'experience_id' => $experience_id,
-                'job_id' => $job->id
-            ]);
+            $experience = Experience::findOrFail($experience_id);
+            $job->experiences()->attach($experience);
         }
         foreach($request->language as $language_id){
-            $job_language = Job_language::create([
-                'language_id' => $language_id,
-                'job_id' => $job->id
-            ]);
+            $language = Language::findOrFail($language_id);
+            $job->experiences()->attach($language);
         }
         foreach($request->location as $location_id){
-            $job_location = Job_location::create([
-                'location_id' => $location_id,
-                'job_id' => $job->id
-            ]);
+            $location = Location::findOrFail($location_id);
+            $job->locations()->attach($location);
         }
         foreach($request->type as $type_id){
-            $job_type = Job_type::create([
-                'type_id' => $type_id,
-                'job_id' => $job->id
-            ]);
+            $type = Type::findOrFail($type_id);
+            $job->types()->attach($type);
         }
         foreach($request->study as $study_id){
             $job_study = Job_study::create([
                 'study_id' => $study_id,
                 'job_id' => $job->id
             ]);
+            $study = Study::findOrFail($study_id);
+            $job->studies()->attach($study);
         }
 
         return response(['success' => "Job created successfully!"]);

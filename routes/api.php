@@ -24,6 +24,9 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/get_token', [AuthController::class, 'get_token']);
 Route::get('/get_categories', [JobsController::class, 'get_categories']);
+
+Route::get('/jobs', [JobsController::class, 'index']);
+
 Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/create_job', [JobsController::class, 'store']);
