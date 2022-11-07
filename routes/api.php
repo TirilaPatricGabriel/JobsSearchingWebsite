@@ -25,6 +25,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/get_token', [AuthController::class, 'get_token']);
 Route::get('/get_categories', [JobsController::class, 'get_categories']);
 
+Route::post('/filter_jobs', [JobsController::class, 'filter_jobs']);
 Route::get('/jobs', [JobsController::class, 'index']);
 
 Route::group(['middleware' => ['auth:sanctum']], function(){

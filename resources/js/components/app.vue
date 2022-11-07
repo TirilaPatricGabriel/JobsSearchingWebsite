@@ -1,13 +1,12 @@
 <template>
     <nav>
-        <h1>Hello World!</h1>
-            <a href="login">Login</a>
-            <a href="register">Register</a>
-            <Logout></Logout>
-            <a href="createjob">Create job</a>
+        <a href="login">Login</a>
+        <a href="register">Register</a>
+        <Logout @tokenSent="setToken"></Logout>
+        <a href="createjob">Create job</a>
     </nav>
     <div class="w-screen flex items-center justify-center mt-4">
-        <input type="text" placeholder="Key Words" class="w-8/12 h-10 border-2 rounded-sm border-black pl-4">
+        <input type="text" v-model="fields.search" placeholder="Key Words" class="w-8/12 h-10 border-2 rounded-sm border-black pl-4">
         <button class="w-1/12 h-10 border-2 rounded-md ml-2 bg-green-200 border-green-800 hover:border-green-200 hover:bg-green-600 hover:text-white">SEARCH</button>
     </div>
 
@@ -22,7 +21,7 @@
                 </div>
 
                 <div v-for="domain in domains">
-                    <input @change="changeCategory($event)" name="domain" type="checkbox" :id="domain.id"> {{domain.name}}
+                    <input @change="changeCategory($event)" name="domains" type="checkbox" :id="domain.id"> {{domain.name}}
                 </div>
             </div>
 
@@ -31,7 +30,7 @@
                     <h1 class="text-xl font-bold">Experience</h1>
                 </div>
                 <div v-for="experience in experiences">
-                    <input @change="changeCategory($event)" name="experience" type="checkbox" :id="experience.id"> {{experience.name}}
+                    <input @change="changeCategory($event)" name="experiences" type="checkbox" :id="experience.id"> {{experience.name}}
                 </div>
                 
             </div>
@@ -41,7 +40,7 @@
                     <h1 class="text-xl font-bold">Language</h1>
                 </div>
                 <div v-for="language in languages">
-                    <input @change="changeCategory($event)" name="language" type="checkbox" :id="language.id"> {{language.name}}
+                    <input @change="changeCategory($event)" name="languages" type="checkbox" :id="language.id"> {{language.name}}
                 </div>
             </div>
 
@@ -50,7 +49,7 @@
                     <h1 class="text-xl font-bold">Type</h1>
                 </div>
                 <div v-for="kind in types">
-                    <input @change="changeCategory($event)" name="type" type="checkbox" :id="kind.id"> {{kind.name}}
+                    <input @change="changeCategory($event)" name="types" type="checkbox" :id="kind.id"> {{kind.name}}
                 </div>
             </div>
 
@@ -59,7 +58,7 @@
                     <h1 class="text-xl font-bold">Studies</h1>
                 </div>
                 <div v-for="study in studies">
-                    <input @change="changeCategory($event)" name="study" type="checkbox" :id="study.id"> {{study.name}}
+                    <input @change="changeCategory($event)" name="studies" type="checkbox" :id="study.id"> {{study.name}}
                 </div>
             </div>
 
@@ -69,7 +68,7 @@
                     <h1 class="text-xl font-bold">Location</h1>
                 </div>
                 <div v-for="location in locations">
-                    <input @change="changeCategory($event)" type="checkbox" name="location" :id="location.id"> {{location.name}}
+                    <input @change="changeCategory($event)" type="checkbox" name="locations" :id="location.id"> {{location.name}}
                 </div>
             </div>
         </div> 
@@ -117,22 +116,24 @@
             return {
                 fields: {
                     'search': '',
-                    'domain': [],
-                    'experience': [],
-                    'language': [],
-                    'location': [],
-                    'type': [],
-                    'study': [],
-                    'company': '',
-                    'salary': 0
+                    'domains': [],
+                    'experiences': [],
+                    'languages': [],
+                    'locations': [],
+                    'types': [],
+                    'studies': [],
+                    // 'company': '',
+                    // 'salary': 0
                 },
                 jobs: [],
+                jobsAfterFilters: [],
                 domains: [],
                 languages: [],
                 experiences: [],
                 studies: [],
                 types: [],
-                locations: []
+                locations: [],
+                token: ''
             }
         },
         components: {
@@ -162,11 +163,25 @@
                 let category = e.target.name
                 if(e.target.checked == true){
                     this.fields[category].push(e.target.id)
+                    axios.post("/api/filter_jobs", {
+                        filteredJobs: this.jobsAfterFilters,
+                        changedCategory: category,
+                        id: e.target.id,
+                    })
+                    .then(res => {
+                        console.log(res)
+                        this.jobsAfterFilters = res.data.jobs
+                    })
+                    .catch(err => console.log(err))
                 }
                 else{
                     this.fields[category].splice(this.fields[category].indexOf(e.target.id), 1);
                 }
+
                 console.log(this.fields[category])
+            },
+            setToken(value){
+                this.token = value
             }
         }
     }

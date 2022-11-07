@@ -120,4 +120,38 @@ class JobsController extends Controller
             'types' => $types
         ]);
     }
+
+    public function filter_jobs(Request $request)
+    {
+        if($request->changedCategory == "domains"){
+            $queries = Domain_job::where("domain_id", "=", $request->id)->get();
+        }
+        else if($request->changedCategory == "experiences"){
+            $queries = Experience_job::where("experience_id", "=", $request->id)->get();
+
+        }
+        else if($request->changedCategory == "languages"){
+            $queries = Job_language::where("language_id", "=", $request->id)->get();
+
+        }
+        else if($request->changedCategory == "locations"){
+            $queries = Job_location::where("location_id", "=", $request->id)->get();
+
+        }
+        else if($request->changedCategory == "studies"){
+            $queries = Job_study::where("study_id", "=", $request->id)->get();
+
+        }
+        else if($request->changedCategory == "types"){
+            $queries = Job_type::where("type_id", "=", $request->id)->get();
+        }
+        $arr = $request->filteredJobs;
+        foreach($queries as $query){
+            $job = Job::findOrFail($query->job_id);
+            array_push($arr, $job);
+        }
+        
+
+        return response(['jobs' => $arr]);
+    }
 }

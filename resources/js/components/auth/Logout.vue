@@ -32,8 +32,11 @@
             .then(res => {
                 this.token = res.data.token
                 console.log(this.token)
+                this.$emit('tokenSent', this.token)
+
             })
             .catch(err => console.log(err))
+
         }
     }
 </script>
