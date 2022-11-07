@@ -6,11 +6,76 @@
             <Logout></Logout>
             <a href="createjob">Create job</a>
     </nav>
-    <div class="flex flex-row border-2 border-green-800">
-        <div class="filters border-2 border-red-800 w-4/12">
-            
+    <div class="w-screen flex items-center justify-center mt-4">
+        <input type="text" placeholder="Key Words" class="w-8/12 h-10 border-2 rounded-sm border-black pl-4">
+        <button class="w-1/12 h-10 border-2 rounded-md ml-2 bg-green-200 border-green-800 hover:border-green-200 hover:bg-green-600 hover:text-white">SEARCH</button>
+    </div>
+
+    <hr class="w-screen mt-4 border-black">
+
+    <div class="flex flex-row">
+        <div class="filters w-4/12 flex flex-col items-center">
+
+            <div class="domain flex flex-col justify-center border-2 border-black rounded-sm mt-4 w-8/12">
+                <div class="h-3/12 w-full flex justify-center items-center">
+                    <h1 class="text-xl font-bold">Domain</h1>
+                </div>
+
+                <div v-for="domain in domains">
+                    <input @change="changeCategory($event)" name="domain" type="checkbox" :id="domain.id"> {{domain.name}}
+                </div>
+            </div>
+
+            <div class="experience flex flex-col justify-center border-2 border-black rounded-sm mt-8 w-8/12">
+                <div class="h-3/12 w-full flex justify-center items-center">
+                    <h1 class="text-xl font-bold">Experience</h1>
+                </div>
+                <div v-for="experience in experiences">
+                    <input @change="changeCategory($event)" name="experience" type="checkbox" :id="experience.id"> {{experience.name}}
+                </div>
+                
+            </div>
+
+            <div class="language flex flex-col justify-center border-2 border-black rounded-sm mt-8 w-8/12">
+                <div class="h-3/12 w-full flex justify-center items-center">
+                    <h1 class="text-xl font-bold">Language</h1>
+                </div>
+                <div v-for="language in languages">
+                    <input @change="changeCategory($event)" name="language" type="checkbox" :id="language.id"> {{language.name}}
+                </div>
+            </div>
+
+            <div class="type flex flex-col justify-center border-2 border-black rounded-sm mt-8 w-8/12">
+                <div class="h-3/12 w-full flex justify-center items-center">
+                    <h1 class="text-xl font-bold">Type</h1>
+                </div>
+                <div v-for="kind in types">
+                    <input @change="changeCategory($event)" name="type" type="checkbox" :id="kind.id"> {{kind.name}}
+                </div>
+            </div>
+
+            <div class="study flex flex-col justify-center border-2 border-black rounded-sm mt-8 w-8/12">
+                <div class="h-3/12 w-full flex justify-center items-center">
+                    <h1 class="text-xl font-bold">Studies</h1>
+                </div>
+                <div v-for="study in studies">
+                    <input @change="changeCategory($event)" name="study" type="checkbox" :id="study.id"> {{study.name}}
+                </div>
+            </div>
+
+            <!-- !!!!!!!!!!!!!!!! USE API !!!!!!!!!!!!!!!! -->
+            <div class="location flex flex-col justify-center border-2 border-black rounded-sm mt-8 w-8/12">
+                <div class="h-3/12 w-full flex justify-center items-center">
+                    <h1 class="text-xl font-bold">Location</h1>
+                </div>
+                <div v-for="location in locations">
+                    <input @change="changeCategory($event)" type="checkbox" name="location" :id="location.id"> {{location.name}}
+                </div>
+            </div>
         </div> 
-        <div class="border-2 border-blue-800 w-8/12">
+
+        
+        <div class="w-8/12">
             <div class="border-3 rounded-md m-4 p-5 bg-white border-2" v-for="job in jobs">
                 <h2 class="created_at">{{job.created_at}}</h2>
                 <h1 class="title text-2xl font-bold">{{job.title}}</h1>
@@ -50,7 +115,24 @@
     export default {
         data(){
             return {
-                jobs: []
+                fields: {
+                    'search': '',
+                    'domain': [],
+                    'experience': [],
+                    'language': [],
+                    'location': [],
+                    'type': [],
+                    'study': [],
+                    'company': '',
+                    'salary': 0
+                },
+                jobs: [],
+                domains: [],
+                languages: [],
+                experiences: [],
+                studies: [],
+                types: [],
+                locations: []
             }
         },
         components: {
@@ -63,6 +145,29 @@
                 console.log(res.data)
             })
             .catch(err => console.log(err))
+
+            axios.get('/api/get_categories')
+            .then(res => {
+                this.locations = res.data.locations
+                this.domains = res.data.domains
+                this.languages = res.data.languages
+                this.experiences = res.data.experiences
+                this.types = res.data.types
+                this.studies = res.data.studies
+            })
+            .catch(err => console.log(err))
+        },
+        methods: {
+            changeCategory(e){
+                let category = e.target.name
+                if(e.target.checked == true){
+                    this.fields[category].push(e.target.id)
+                }
+                else{
+                    this.fields[category].splice(this.fields[category].indexOf(e.target.id), 1);
+                }
+                console.log(this.fields[category])
+            }
         }
     }
 </script>
