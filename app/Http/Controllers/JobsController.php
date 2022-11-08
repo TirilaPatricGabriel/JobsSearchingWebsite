@@ -123,35 +123,69 @@ class JobsController extends Controller
 
     public function filter_jobs(Request $request)
     {
+        $cat = 0;
         if($request->changedCategory == "domains"){
             $queries = Domain_job::where("domain_id", "=", $request->id)->get();
+            if(in_array("domains", $request->usedCategories)){
+                $cat = 1;
+            }
         }
         else if($request->changedCategory == "experiences"){
             $queries = Experience_job::where("experience_id", "=", $request->id)->get();
-
+            if(in_array("experiences", $request->usedCategories)){
+                $cat = 1;
+            }
         }
         else if($request->changedCategory == "languages"){
             $queries = Job_language::where("language_id", "=", $request->id)->get();
-
+            if(in_array("languages", $request->usedCategories)){
+                $cat = 1;
+            }
         }
         else if($request->changedCategory == "locations"){
             $queries = Job_location::where("location_id", "=", $request->id)->get();
-
+            if(in_array("locations", $request->usedCategories)){
+                $cat = 1;
+            }
         }
         else if($request->changedCategory == "studies"){
             $queries = Job_study::where("study_id", "=", $request->id)->get();
-
+            if(in_array("studies", $request->usedCategories)){
+                $cat = 1;
+            }
         }
         else if($request->changedCategory == "types"){
             $queries = Job_type::where("type_id", "=", $request->id)->get();
+            if(in_array("types", $request->usedCategories)){
+                $cat = 1;
+            }
         }
-        $arr = $request->filteredJobs;
+        $filtered_jobs_length = count($request->filteredJobs);
+        if($filtered_jobs_length == 0){
+            $arr = Job::all();
+        }
+        else{
+            $arr = $request->filteredJobs;
+        }
+
+        $new_arr = array();
         foreach($queries as $query){
             $job = Job::findOrFail($query->job_id);
-            array_push($arr, $job);
+            if($cat == 0){
+                foreach($arr as $elem){
+                    if($job["id"] == $elem["id"]){
+                        array_push($new_arr, $job);
+                    }
+                }
+            }
+            else{
+                array_push($arr, $job);
+            }
         }
         
-
+        if($cat == 0){
+            return response(['jobs' => $new_arr, 'haha' => 'haha']);
+        }
         return response(['jobs' => $arr]);
     }
 }

@@ -161,15 +161,28 @@
         methods: {
             changeCategory(e){
                 let category = e.target.name
+
+                let usedCategories = [];
+                for(const arr in this.fields){
+                    if(Array.isArray(this.fields[arr])){
+                        if(this.fields[arr].length != 0){
+                            usedCategories.push(arr);
+                        }
+                    }
+                }
+                console.log(usedCategories, "HAHA");
+
                 if(e.target.checked == true){
                     this.fields[category].push(e.target.id)
                     axios.post("/api/filter_jobs", {
                         filteredJobs: this.jobsAfterFilters,
                         changedCategory: category,
                         id: e.target.id,
+                        usedCategories: usedCategories
                     })
                     .then(res => {
                         console.log(res)
+                        this.jobs = res.data.jobs
                         this.jobsAfterFilters = res.data.jobs
                     })
                     .catch(err => console.log(err))
